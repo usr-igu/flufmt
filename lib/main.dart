@@ -1,5 +1,9 @@
+import 'dart:convert';
+
+import 'package:flufmt/noticia_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(MyApp());
 
@@ -26,23 +30,51 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<NoticiaModel> lista;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.only(left: 4.0, right: 4.0, bottom: 4.0),
-            child: NoticiaCard(
-              tituloNoticia: 'SISU 2019 - Quarta Convocatória para Matrícula (16 e 17\/04\/2019)',
-              chamadaNoticia: 'SISU 2019 - Quarta Convocatória para Matrícula (dias 16 e 17)',
-              imagemNoticia: 'd05b551cccbdb8c3ff7d32e2db44ea10.png',
-            ),
-          );
+      body: FutureBuilder<List<NoticiaModel>>(
+        future: getNoticias(),
+        builder: (context, snapshot) {
+          if (snapshot != null && snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.only(left: 4.0, right: 4.0, bottom: 4.0),
+                  child: NoticiaCard(
+                    tituloNoticia: snapshot.data[index].tituloNoticia,
+                    chamadaNoticia: snapshot.data[index].chamadaNoticia,
+                    imagemNoticia: snapshot.data[index].imagemNoticia,
+                  ),
+                );
+              },
+            );
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
         },
       ),
     );
+  }
+
+  Future<List<NoticiaModel>> getNoticias() async {
+    List<NoticiaModel> lista = List();
+    final response =
+        await http.get('http://www.ufmt.br/webservice/teste.php/0/10');
+    final map = jsonDecode(response.body);
+    map.forEach((e) {
+      lista.add(NoticiaModel.fromJson(e));
+    });
+    return lista;
   }
 }
 
@@ -50,14 +82,18 @@ class NoticiaCard extends StatelessWidget {
   final String tituloNoticia;
   final String chamadaNoticia;
   final String imagemNoticia;
-  String get _imagemUrl => imagemNoticia != null ? 'http://www.ufmt.br/ufmt/site/userfiles/noticias/$imagemNoticia' : null;
+
+  String get _imagemUrl => imagemNoticia != null
+      ? 'http://www.ufmt.br/ufmt/site/userfiles/noticias/$imagemNoticia'
+      : null;
 
   const NoticiaCard({
     Key key,
     @required this.tituloNoticia,
     this.chamadaNoticia,
     this.imagemNoticia,
-  }) : assert(tituloNoticia != null), super(key: key);
+  })  : assert(tituloNoticia != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
