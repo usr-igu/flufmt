@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 
 abstract class NoticiaEvent extends Equatable {
   NoticiaEvent([List props = const []]) : super(props);
@@ -7,11 +6,16 @@ abstract class NoticiaEvent extends Equatable {
 
 class LoadNoticias extends NoticiaEvent {
   final int quantidade;
-  final int inicio;
+  final int pagina;
 
-  LoadNoticias({this.inicio = 0, @required this.quantidade})
-      : super([inicio, quantidade]);
+  LoadNoticias({this.pagina = 0, this.quantidade = 10})
+      : super([pagina, quantidade]);
 
   @override
-  String toString() => 'LoadNoticias';
+  String toString() => 'LoadNoticias { página: $pagina }';
+}
+
+class LoadNextPage extends NoticiaEvent {
+  @override
+  String toString() => 'LoadNextPageNoticias';
 }

@@ -2,38 +2,43 @@ import 'package:equatable/equatable.dart';
 import 'package:flufmt/noticia/noticia_model.dart';
 import 'package:flutter/foundation.dart';
 
-abstract class NoticiaState extends Equatable {
-  NoticiaState([List props = const []]) : super(props);
+abstract class NoticiasState extends Equatable {
+  NoticiasState([List props = const []]) : super(props);
 }
 
-class NoticiaInitial extends NoticiaState {
+class NoticiasInitial extends NoticiasState {
   @override
-  String toString() => 'NoticiaInitial';
+  String toString() => 'NoticiasInitial';
 }
 
-class NoticiaLoading extends NoticiaState {
+class NoticiasEmpty extends NoticiasState {
   @override
-  String toString() => 'NoticiaLoading';
+  String toString() => 'NoticiasEmpty';
 }
 
-class NoticiaLoaded extends NoticiaState {
+class NoticiasLoading extends NoticiasState {
+  @override
+  String toString() => 'NoticiasLoading';
+}
+
+class NoticiasLoaded extends NoticiasState {
   final List<NoticiaModel> noticias;
 
-  NoticiaLoaded({@required this.noticias})
+  NoticiasLoaded({@required this.noticias})
       : assert(noticias != null),
         super([noticias]);
 
   @override
-  String toString() => 'NoticiaLoaded';
+  String toString() => 'NoticiasLoaded';
 }
 
-class NoticiaError extends NoticiaState {
+class NoticiasError extends NoticiasState {
   final String error;
 
-  NoticiaError({@required this.error})
+  NoticiasError({@required this.error})
       : assert(error != null),
         super([error]);
 
   @override
-  String toString() => 'NoticiaError';
+  String toString() => 'NoticiasError { error: $error }';
 }

@@ -8,18 +8,25 @@ class NoticiaService {
 
   NoticiaService(this._client);
 
-  Future<List<NoticiaModel>> getNoticias(int inicio, int quantidade) async {
-    final response = await _client
-        .get('http://www.ufmt.br/webservice/teste.php/$inicio/$quantidade');
+  Future<List<NoticiaModel>> getNoticias(int pagina, int quantidade) async {
+    try {
+      final request = _client.get(
+          'http://www.ufmt.br/webservice/teste.php/${pagina * quantidade}/$quantidade');
 
-    if (response.statusCode == 200) {
-      return await jsonDecode(response.body)
-          .map<NoticiaModel>((noticia) => NoticiaModel.fromJson(noticia))
-//          .where((noticia) => noticia.descricaoCategoria == 'Geral')
-          .toList();
-    } else {
+      final response = await request.timeout(const Duration(seconds: 5));
+
+      if (response.statusCode == 200) {
+        return await jsonDecode(response.body)
+            .map<NoticiaModel>((noticia) => NoticiaModel.fromJson(noticia))
+            .where((noticia) => noticia.descricaoCategoria == 'Geral')
+            .toList();
+      } else {
+        throw Exception(
+            'Erro na requisição das notícias: ${response.statusCode}');
+      }
+    } catch (e) {
       throw Exception(
-          'Erro na requisição das notícias: ${response.statusCode}');
+          'Não foi possível conectar ao servidor, verifique sua conexão com a internet.');
     }
   }
 }

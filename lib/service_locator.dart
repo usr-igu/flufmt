@@ -7,5 +7,5 @@ GetIt getIt = GetIt();
 
 void setupServiceLocator() {
   getIt.registerSingleton<NoticiaService>(NoticiaService(http.Client()));
-  getIt.registerSingleton<NoticiaBloc>(NoticiaBloc());
+  getIt.registerSingleton<NoticiaBloc>(NoticiaBloc(itemsPorPagina: 10));
 }

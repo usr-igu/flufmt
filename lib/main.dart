@@ -18,12 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'flufmt',
-      theme: ThemeData.light().copyWith(
-        primaryColor: Color(0xFF1C262A),
-        accentColor: Color(0xFFA7D9D5),
-        buttonColor: Color(0xFF1C262A),
-        disabledColor: Colors.white12,
-      ),
+      theme: ThemeData.dark(),
       home: HomePage(title: 'flufmt'),
     );
   }
@@ -39,46 +34,70 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  var _cardsListScrollController = ScrollController();
   @override
   void initState() {
-    getIt.get<NoticiaBloc>().dispatch(LoadNoticias(quantidade: 10));
+    getIt.get<NoticiaBloc>().dispatch(LoadNoticias(pagina: 0, quantidade: 3));
+    _cardsListScrollController.addListener(() {
+      if (_cardsListScrollController.position.extentAfter <= 0) {
+        getIt.get<NoticiaBloc>().dispatch(LoadNextPage());
+      }
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _cardsListScrollController.dispose();
+    getIt.get<NoticiaBloc>().dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<NoticiaEvent, NoticiaState>(
+      body: BlocBuilder<NoticiaEvent, NoticiasState>(
         bloc: getIt.get<NoticiaBloc>(),
         builder: (context, state) {
-          if (state is NoticiaLoaded) {
+          if (state is NoticiasLoaded) {
             return ListView.builder(
-              itemCount: state.noticias.length,
+              controller: _cardsListScrollController,
+              itemCount: state.noticias.length + 1,
               itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(
-                    left: 4.0,
-                    right: 4.0,
-                    bottom: 4.0,
-                  ),
-                  child: NoticiaCard(
-                    tituloNoticia: state.noticias[index].tituloNoticia,
-                    chamadaNoticia: state.noticias[index].chamadaNoticia,
-                    imagemNoticia: state.noticias[index].imagemNoticia,
-                  ),
-                );
+                if (index < state.noticias.length) {
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      left: 4.0,
+                      right: 4.0,
+                      bottom: 4.0,
+                    ),
+                    child: NoticiaCard(
+                      tituloNoticia: state.noticias[index].tituloNoticia,
+                      chamadaNoticia: state.noticias[index].chamadaNoticia,
+                      imagemNoticia: state.noticias[index].imagemNoticia,
+                    ),
+                  );
+                }
+                return Center(
+                    child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(),
+                ));
               },
             );
-          } else if (state is NoticiaLoading) {
+          } else if (state is NoticiasLoading) {
             return Center(
               child: CircularProgressIndicator(),
             );
-          } else if (state is NoticiaError) {
+          } else if (state is NoticiasError) {
             return Center(
-              child: Text(
-                state.error,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 24.0, color: Colors.red),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  state.error,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 24.0, color: Colors.red),
+                ),
               ),
             );
           }
@@ -118,11 +137,11 @@ class NoticiaCard extends StatelessWidget {
         children: <Widget>[
           (imagemNoticia != null)
               ? Container(
-            constraints: BoxConstraints.tightFor(
-              width: double.infinity,
-              height: 200.0,
+                  constraints: BoxConstraints.tightFor(
+                    width: double.infinity,
+                    height: 200.0,
                   ),
-            child: _buildImage(_imagemUrl),
+                  child: _buildImage(_imagemUrl),
                 )
               : null,
           Padding(
@@ -172,9 +191,8 @@ class NoticiaCard extends StatelessWidget {
     try {
       final image = CachedNetworkImage(
         imageUrl: url,
-        errorWidget: (context, url, error) =>
-            Center(
-              child: Text('Nao foi possivel carregar essa imagem.'),
+        errorWidget: (context, url, error) => Center(
+              child: Text('Não foi possível carregar essa imagem.'),
             ),
         fit: BoxFit.cover,
       );
