@@ -1,19 +1,28 @@
-import 'dart:convert';
-
-import 'package:flufmt/noticia_model.dart';
-import 'package:flutter/material.dart';
+import 'package:bloc/bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flufmt/bloc_delegate.dart';
+import 'package:flufmt/noticia/bloc/noticia.dart';
+import 'package:flufmt/service_locator.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  BlocSupervisor().delegate = SimpleBlocDelegate();
+  setupServiceLocator();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'flufmt',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      theme: ThemeData.light().copyWith(
+        primaryColor: Color(0xFF1C262A),
+        accentColor: Color(0xFFA7D9D5),
+        buttonColor: Color(0xFF1C262A),
+        disabledColor: Colors.white12,
       ),
       home: HomePage(title: 'flufmt'),
     );
@@ -30,51 +39,56 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<NoticiaModel> lista;
-
   @override
   void initState() {
+    getIt.get<NoticiaBloc>().dispatch(LoadNoticias(quantidade: 10));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<List<NoticiaModel>>(
-        future: getNoticias(),
-        builder: (context, snapshot) {
-          if (snapshot != null && snapshot.hasData) {
+      body: BlocBuilder<NoticiaEvent, NoticiaState>(
+        bloc: getIt.get<NoticiaBloc>(),
+        builder: (context, state) {
+          if (state is NoticiaLoaded) {
             return ListView.builder(
-              itemCount: snapshot.data.length,
+              itemCount: state.noticias.length,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding:
-                      const EdgeInsets.only(left: 4.0, right: 4.0, bottom: 4.0),
+                  padding: const EdgeInsets.only(
+                    left: 4.0,
+                    right: 4.0,
+                    bottom: 4.0,
+                  ),
                   child: NoticiaCard(
-                    tituloNoticia: snapshot.data[index].tituloNoticia,
-                    chamadaNoticia: snapshot.data[index].chamadaNoticia,
-                    imagemNoticia: snapshot.data[index].imagemNoticia,
+                    tituloNoticia: state.noticias[index].tituloNoticia,
+                    chamadaNoticia: state.noticias[index].chamadaNoticia,
+                    imagemNoticia: state.noticias[index].imagemNoticia,
                   ),
                 );
               },
             );
-          } else {
-            return Center(child: CircularProgressIndicator());
+          } else if (state is NoticiaLoading) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state is NoticiaError) {
+            return Center(
+              child: Text(
+                state.error,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 24.0, color: Colors.red),
+              ),
+            );
           }
+          return Container(
+            width: 0.0,
+            height: 0.0,
+          );
         },
       ),
     );
-  }
-
-  Future<List<NoticiaModel>> getNoticias() async {
-    List<NoticiaModel> lista = List();
-    final response =
-        await http.get('http://www.ufmt.br/webservice/teste.php/0/10');
-    final map = jsonDecode(response.body);
-    map.forEach((e) {
-      lista.add(NoticiaModel.fromJson(e));
-    });
-    return lista;
   }
 }
 
@@ -104,11 +118,11 @@ class NoticiaCard extends StatelessWidget {
         children: <Widget>[
           (imagemNoticia != null)
               ? Container(
-                  constraints: BoxConstraints.expand(height: 200.0),
-                  child: Image.network(
-                    _imagemUrl,
-                    fit: BoxFit.cover,
+            constraints: BoxConstraints.tightFor(
+              width: double.infinity,
+              height: 200.0,
                   ),
+            child: _buildImage(_imagemUrl),
                 )
               : null,
           Padding(
@@ -152,5 +166,21 @@ class NoticiaCard extends StatelessWidget {
         ].where((o) => o != null).toList(),
       ),
     );
+  }
+
+  Widget _buildImage(String url) {
+    try {
+      final image = CachedNetworkImage(
+        imageUrl: url,
+        errorWidget: (context, url, error) =>
+            Center(
+              child: Text('Nao foi possivel carregar essa imagem.'),
+            ),
+        fit: BoxFit.cover,
+      );
+      return image;
+    } catch (e) {
+      return null;
+    }
   }
 }
