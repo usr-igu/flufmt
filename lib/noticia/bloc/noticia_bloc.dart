@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:bloc/bloc.dart';
 import 'package:flufmt/noticia/bloc/noticia_event.dart';
 import 'package:flufmt/noticia/bloc/noticia_state.dart';
-import 'package:bloc/bloc.dart';
 import 'package:flufmt/noticia/noticia_repository.dart';
 import 'package:flufmt/service_locator.dart';
 import 'package:flutter/foundation.dart';
@@ -37,7 +37,7 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiasState> {
       if (event is LoadNextPage) {
         if (currentState is NoticiasLoaded) {
           final _noticias =
-              await _noticiaService.getNoticias(++_pagina, itemsPorPagina + 1);
+          await _noticiaService.getNoticias(++_pagina, itemsPorPagina);
           yield NoticiasLoaded(
               noticias: (currentState as NoticiasLoaded).noticias + _noticias);
         }
