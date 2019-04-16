@@ -21,7 +21,7 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiasState> {
   @override
   Stream<NoticiaEvent> transform(Stream<NoticiaEvent> events) {
     return (events as Observable<NoticiaEvent>)
-        .debounce(Duration(milliseconds: 500));
+        .debounce(Duration(milliseconds: 300));
   }
 
   @override
@@ -29,15 +29,14 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiasState> {
     try {
       if (event is LoadNoticias) {
         yield NoticiasLoading();
-        _pagina = event.pagina;
         final _noticias =
-            await _noticiaService.getNoticias(event.pagina, itemsPorPagina);
+            await _noticiaService.getNoticias(_pagina, itemsPorPagina);
         yield NoticiasLoaded(noticias: _noticias);
       }
       if (event is LoadNextPage) {
         if (currentState is NoticiasLoaded) {
           final _noticias =
-          await _noticiaService.getNoticias(++_pagina, itemsPorPagina);
+              await _noticiaService.getNoticias(++_pagina, itemsPorPagina);
           yield NoticiasLoaded(
               noticias: (currentState as NoticiasLoaded).noticias + _noticias);
         }

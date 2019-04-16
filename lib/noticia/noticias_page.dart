@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flufmt/main.dart';
 import 'package:flufmt/noticia/bloc/noticia.dart';
 import 'package:flufmt/noticia/ler_noticia_page.dart';
 import 'package:flufmt/noticia/noticia_model.dart';
@@ -18,7 +19,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
 
   @override
   void initState() {
-    getIt.get<NoticiaBloc>().dispatch(LoadNoticias(pagina: 0, quantidade: 3));
+    getIt.get<NoticiaBloc>().dispatch(LoadNoticias(pagina: 0));
     _cardsListScrollController.addListener(() {
       if (_cardsListScrollController.position.extentAfter <= 0) {
         getIt.get<NoticiaBloc>().dispatch(LoadNextPage());
@@ -46,12 +47,9 @@ class _NoticiasPageState extends State<NoticiasPage> {
               itemCount: state.noticias.length + 1,
               itemBuilder: (context, index) {
                 if (index < state.noticias.length) {
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                      left: 4.0,
-                      right: 4.0,
-                      bottom: 4.0,
-                    ),
+                  return GestureDetector(
+                    onTap: () =>
+                        _pushPaginaLerNoticia(context, state.noticias[index]),
                     child: NoticiaCard(
                       noticia: state.noticias[index],
                     ),
@@ -106,6 +104,7 @@ class NoticiaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: EdgeInsets.all(8.0),
       clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,28 +134,28 @@ class NoticiaCard extends StatelessWidget {
               ],
             ),
           ),
+          // FIXME: No futuro usar os temas globais aqui.
           ButtonTheme.bar(
             child: ButtonBar(
               children: <Widget>[
                 FlatButton(
+                  textColor: AZUL_UFMT,
                   child: const Text('LER'),
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              LerNoticiaPage(noticia: noticia),
-                        ));
+                    _pushPaginaLerNoticia(context, noticia);
                   },
                 ),
                 FlatButton(
+                  textColor: AZUL_UFMT,
                   child: Row(
                     children: <Widget>[
                       const Icon(
                         Icons.share,
                         size: 16.0,
                       ),
-                      const Text('COMPARTILHAR'),
+                      const Text(
+                        'COMPARTILHAR',
+                      ),
                     ],
                   ),
                   onPressed: () {},
@@ -185,4 +184,13 @@ class NoticiaCard extends StatelessWidget {
       return null;
     }
   }
+}
+
+void _pushPaginaLerNoticia(BuildContext context, NoticiaModel noticia) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => LerNoticiaPage(noticia: noticia),
+    ),
+  );
 }

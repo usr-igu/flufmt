@@ -14,12 +14,25 @@ void main() {
   runApp(MyApp());
 }
 
+const Color AZUL_UFMT = const Color(0xFF1C306D);
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'flufmt',
-      theme: ThemeData.light(),
+      theme: ThemeData.light().copyWith(
+        primaryColor: AZUL_UFMT,
+        accentColor: AZUL_UFMT,
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: AZUL_UFMT,
+        ),
+        textTheme: Theme.of(context).textTheme.copyWith(
+              title: TextStyle(fontSize: 24.0, color: AZUL_UFMT),
+              body1: TextStyle(fontSize: 14.0, color: Colors.black),
+            ),
+        scaffoldBackgroundColor: Colors.white,
+      ),
       home: HomePage(),
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
@@ -44,7 +57,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: NoticiasPage(),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: NoticiasPage(),
+      ),
     );
   }
 }
