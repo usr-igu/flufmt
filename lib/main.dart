@@ -5,8 +5,10 @@ import 'package:flufmt/service_locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 
 void main() {
+  Intl.defaultLocale = 'pt_BR';
   BlocSupervisor().delegate = SimpleBlocDelegate();
   setupServiceLocator();
   runApp(MyApp());

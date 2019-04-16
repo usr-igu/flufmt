@@ -1,5 +1,6 @@
 import 'package:flufmt/noticia/noticia_model.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter_html/flutter_html.dart';
 
@@ -78,6 +79,6 @@ class LerNoticiaPage extends StatelessWidget {
       }
       return 'há aproximadamente ${elapsed.inHours} horas atrás';
     }
-    return date.toLocal().toString();
+    return DateFormat.MMMMEEEEd().add_Hm().format(date);
   }
 }
