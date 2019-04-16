@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flufmt/noticia/common.dart';
 
 class LerNoticiaPage extends StatelessWidget {
   final NoticiaModel noticia;
@@ -22,7 +22,10 @@ class LerNoticiaPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.share),
-        onPressed: () {},
+        onPressed: () => compartilhaNoticia(
+              titulo: noticia.tituloNoticia,
+              idNoticia: noticia.idNoticia,
+            ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -56,7 +59,7 @@ class LerNoticiaPage extends StatelessWidget {
                 linkStyle: TextStyle(
                   color: AZUL_UFMT,
                 ),
-                onLinkTap: _launchURL,
+                onLinkTap: disparaUrl,
               ),
               SizedBox(
                 height: 64.0,
@@ -94,20 +97,12 @@ class LerNoticiaPage extends StatelessWidget {
           (assunto) => Chip(
                 avatar: Icon(
                   Icons.label,
-                  color: Colors.grey[700],
+                  color: Colors.grey[600],
                 ),
                 backgroundColor: Colors.grey[200],
                 label: Text(assunto),
               ),
         )
         .toList();
-  }
-}
-
-void _launchURL(String url) async {
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
   }
 }

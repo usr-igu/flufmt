@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flufmt/bloc_delegate.dart';
+import 'package:flufmt/noticia/common.dart';
 import 'package:flufmt/noticia/noticias_page.dart';
 import 'package:flufmt/service_locator.dart';
 import 'package:flutter/foundation.dart';
@@ -14,7 +15,6 @@ void main() {
   runApp(MyApp());
 }
 
-const Color AZUL_UFMT = const Color(0xFF1C306D);
 
 class MyApp extends StatelessWidget {
   @override
@@ -32,6 +32,15 @@ class MyApp extends StatelessWidget {
               body1: TextStyle(fontSize: 14.0, color: Colors.black),
             ),
         scaffoldBackgroundColor: Colors.white,
+        appBarTheme: Theme.of(context).appBarTheme.copyWith(
+              color: Colors.white,
+              textTheme: TextTheme(
+                title: TextStyle(color: Colors.black, fontSize: 20),
+              ),
+              iconTheme: IconThemeData(
+                color: Colors.black,
+              ),
+            ),
       ),
       home: HomePage(),
       localizationsDelegates: [

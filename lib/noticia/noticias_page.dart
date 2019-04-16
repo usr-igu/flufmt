@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flufmt/main.dart';
 import 'package:flufmt/noticia/bloc/noticia.dart';
+import 'package:flufmt/noticia/common.dart';
 import 'package:flufmt/noticia/ler_noticia_page.dart';
 import 'package:flufmt/noticia/noticia_model.dart';
 import 'package:flufmt/service_locator.dart';
@@ -22,10 +22,14 @@ class _NoticiasPageState extends State<NoticiasPage> {
     getIt.get<NoticiaBloc>().dispatch(LoadNoticias(pagina: 0));
     _cardsListScrollController.addListener(() {
       if (_cardsListScrollController.position.extentAfter <= 0) {
-        getIt.get<NoticiaBloc>().dispatch(LoadNextPage());
+        _loadNoticias();
       }
     });
     super.initState();
+  }
+
+  void _loadNoticias() {
+    getIt.get<NoticiaBloc>().dispatch(LoadNextPage());
   }
 
   @override
@@ -42,25 +46,30 @@ class _NoticiasPageState extends State<NoticiasPage> {
         bloc: getIt.get<NoticiaBloc>(),
         builder: (context, state) {
           if (state is NoticiasLoaded) {
-            return ListView.builder(
-              controller: _cardsListScrollController,
-              itemCount: state.noticias.length + 1,
-              itemBuilder: (context, index) {
-                if (index < state.noticias.length) {
-                  return GestureDetector(
-                    onTap: () =>
-                        _pushPaginaLerNoticia(context, state.noticias[index]),
-                    child: NoticiaCard(
-                      noticia: state.noticias[index],
-                    ),
-                  );
-                }
-                return Center(
-                    child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(),
-                ));
+            return RefreshIndicator(
+              onRefresh: () async {
+                _loadNoticias();
               },
+              child: ListView.builder(
+                controller: _cardsListScrollController,
+                itemCount: state.noticias.length + 1,
+                itemBuilder: (context, index) {
+                  if (index < state.noticias.length) {
+                    return GestureDetector(
+                      onTap: () =>
+                          _pushPaginaLerNoticia(context, state.noticias[index]),
+                      child: NoticiaCard(
+                        noticia: state.noticias[index],
+                      ),
+                    );
+                  }
+                  return Center(
+                      child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CircularProgressIndicator(),
+                  ));
+                },
+              ),
             );
           } else if (state is NoticiasLoading) {
             return Center(
@@ -106,6 +115,7 @@ class NoticiaCard extends StatelessWidget {
     return Card(
       margin: EdgeInsets.all(8.0),
       clipBehavior: Clip.antiAlias,
+      elevation: 1.0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -158,7 +168,10 @@ class NoticiaCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  onPressed: () {},
+                  onPressed: () => compartilhaNoticia(
+                        titulo: noticia.tituloNoticia,
+                        idNoticia: noticia.idNoticia,
+                      ),
                 ),
               ],
             ),
