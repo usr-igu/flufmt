@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flufmt/noticia/bloc/noticia.dart';
+import 'package:flufmt/noticia/ler_noticia_page.dart';
+import 'package:flufmt/noticia/noticia_model.dart';
 import 'package:flufmt/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,9 +53,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                       bottom: 4.0,
                     ),
                     child: NoticiaCard(
-                      tituloNoticia: state.noticias[index].tituloNoticia,
-                      chamadaNoticia: state.noticias[index].chamadaNoticia,
-                      imagemNoticia: state.noticias[index].imagemNoticia,
+                      noticia: state.noticias[index],
                     ),
                   );
                 }
@@ -91,20 +91,16 @@ class _NoticiasPageState extends State<NoticiasPage> {
 }
 
 class NoticiaCard extends StatelessWidget {
-  final String tituloNoticia;
-  final String chamadaNoticia;
-  final String imagemNoticia;
+  final NoticiaModel noticia;
 
-  String get _imagemUrl => imagemNoticia != null
-      ? 'http://www.ufmt.br/ufmt/site/userfiles/noticias/$imagemNoticia'
+  String get _imagemUrl => noticia.imagemNoticia != null
+      ? 'http://www.ufmt.br/ufmt/site/userfiles/noticias/${noticia.imagemNoticia}'
       : null;
 
   const NoticiaCard({
     Key key,
-    @required this.tituloNoticia,
-    this.chamadaNoticia,
-    this.imagemNoticia,
-  })  : assert(tituloNoticia != null),
+    @required this.noticia,
+  })  : assert(noticia != null),
         super(key: key);
 
   @override
@@ -114,7 +110,7 @@ class NoticiaCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          (imagemNoticia != null)
+          (_imagemUrl != null)
               ? Container(
                   constraints: BoxConstraints.tightFor(
                     width: double.infinity,
@@ -129,13 +125,13 @@ class NoticiaCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  tituloNoticia,
+                  noticia.tituloNoticia,
                   style: TextStyle(fontSize: 22.0),
                 ),
                 SizedBox(
                   height: 8.0,
                 ),
-                Text(chamadaNoticia)
+                Text(noticia.chamadaNoticia)
               ],
             ),
           ),
@@ -144,7 +140,14 @@ class NoticiaCard extends StatelessWidget {
               children: <Widget>[
                 FlatButton(
                   child: const Text('LER'),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              LerNoticiaPage(noticia: noticia),
+                        ));
+                  },
                 ),
                 FlatButton(
                   child: Row(

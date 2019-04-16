@@ -4,6 +4,7 @@ import 'package:flufmt/noticia/noticias_page.dart';
 import 'package:flufmt/service_locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   BlocSupervisor().delegate = SimpleBlocDelegate();
@@ -18,6 +19,14 @@ class MyApp extends StatelessWidget {
       title: 'flufmt',
       theme: ThemeData.light(),
       home: HomePage(),
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('pt', 'BR'),
+        const Locale('en', 'US'),
+      ],
     );
   }
 }
