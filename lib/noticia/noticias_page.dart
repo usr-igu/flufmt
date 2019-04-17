@@ -19,16 +19,20 @@ class _NoticiasPageState extends State<NoticiasPage> {
 
   @override
   void initState() {
-    getIt.get<NoticiaBloc>().dispatch(LoadNoticias(pagina: 0));
+    _loadNoticias();
     _cardsListScrollController.addListener(() {
       if (_cardsListScrollController.position.extentAfter <= 0) {
-        _loadNoticias();
+        _loadNextPage();
       }
     });
     super.initState();
   }
 
   void _loadNoticias() {
+    getIt.get<NoticiaBloc>().dispatch(LoadNoticias(pagina: 0));
+  }
+
+  void _loadNextPage() {
     getIt.get<NoticiaBloc>().dispatch(LoadNextPage());
   }
 
@@ -51,6 +55,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                 _loadNoticias();
               },
               child: ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
                 controller: _cardsListScrollController,
                 itemCount: state.noticias.length + 1,
                 itemBuilder: (context, index) {
@@ -76,21 +81,25 @@ class _NoticiasPageState extends State<NoticiasPage> {
               child: CircularProgressIndicator(),
             );
           } else if (state is NoticiasError) {
-            return Center(
+            return RefreshIndicator(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  state.error,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 24.0, color: Colors.red),
+                child: ListView(
+                  children: <Widget>[
+                    Text(
+                      state.error,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 24.0, color: Colors.red),
+                    ),
+                  ],
                 ),
               ),
+              onRefresh: () async {
+                _loadNoticias();
+              },
             );
           }
-          return Container(
-            width: 0.0,
-            height: 0.0,
-          );
+          return Container(width: 0.0, height: 0.0);
         },
       ),
     );
