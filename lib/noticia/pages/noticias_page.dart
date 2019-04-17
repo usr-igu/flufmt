@@ -125,7 +125,7 @@ class NoticiaCard extends StatelessWidget {
     return Card(
       margin: EdgeInsets.all(8.0),
       clipBehavior: Clip.antiAlias,
-      elevation: 1.0,
+      elevation: 2.0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
