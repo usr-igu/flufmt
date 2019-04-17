@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
               ),
             ),
       ),
-      home: HomePage(),
+      home: SafeArea(child: HomePage()),
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

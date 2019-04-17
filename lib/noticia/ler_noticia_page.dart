@@ -98,6 +98,7 @@ class LerNoticiaPage extends StatelessWidget {
                 avatar: Icon(
                   Icons.label,
                   color: Colors.grey[600],
+                  size: 20.0,
                 ),
                 backgroundColor: Colors.grey[200],
                 label: Text(assunto),
