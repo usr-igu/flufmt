@@ -89,6 +89,7 @@ class _HomePageState extends State<HomePage>
       appBar: AppBar(
         titleSpacing: 0.0,
         title: TabBar(
+          labelPadding: EdgeInsets.all(8.0),
           controller: _tabController,
           labelColor: CustomColors.AZUL_UFMT,
           indicatorColor: CustomColors.AZUL_UFMT,

@@ -4,7 +4,7 @@ import 'package:share/share.dart';
 import 'package:meta/meta.dart';
 
 class CustomColors {
-  static const Color AZUL_UFMT = const Color(0xFF1C306D);
+  static const Color AZUL_UFMT = const Color(0xFF010033);
 }
 
 class Constants {

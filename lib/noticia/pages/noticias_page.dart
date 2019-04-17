@@ -51,9 +51,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
         builder: (context, state) {
           if (state is NoticiasLoaded) {
             return RefreshIndicator(
-              onRefresh: () async {
-                _loadNoticias();
-              },
+              onRefresh: () async => _loadNoticias(),
               child: ListView.builder(
                 physics: const AlwaysScrollableScrollPhysics(),
                 controller: _cardsListScrollController,
@@ -89,7 +87,10 @@ class _NoticiasPageState extends State<NoticiasPage> {
                     Text(
                       state.error,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 24.0, color: Colors.red),
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        color: Colors.red,
+                      ),
                     ),
                   ],
                 ),
@@ -155,6 +156,7 @@ class NoticiaCard extends StatelessWidget {
           ),
           // FIXME: No futuro usar os temas globais aqui.
           ButtonTheme.bar(
+            layoutBehavior: ButtonBarLayoutBehavior.constrained,
             child: ButtonBar(
               children: <Widget>[
                 FlatButton(
@@ -199,7 +201,7 @@ class NoticiaCard extends StatelessWidget {
                 'Não foi possível carregar essa imagem.',
               ),
             ),
-        fit: BoxFit.scaleDown,
+        fit: BoxFit.cover,
       );
       return image;
     } catch (e) {

@@ -132,10 +132,14 @@ class EventoCard extends StatelessWidget {
                 ],
               ),
             ),
-            trailing: (_imagemUrl != null) ? _buildImage(_imagemUrl) : null,
+            trailing: SizedBox(
+                width: 64,
+                height: 64,
+                child: (_imagemUrl != null) ? _buildImage(_imagemUrl) : null),
           ),
           // FIXME: No futuro usar os temas globais aqui.
           ButtonTheme.bar(
+            layoutBehavior: ButtonBarLayoutBehavior.constrained,
             child: ButtonBar(
               children: <Widget>[
                 FlatButton(
@@ -180,7 +184,7 @@ class EventoCard extends StatelessWidget {
                 'Não foi possível carregar essa imagem.',
               ),
             ),
-        fit: BoxFit.scaleDown,
+        fit: BoxFit.cover,
       );
       return image;
     } catch (e) {
