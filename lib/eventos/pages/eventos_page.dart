@@ -1,70 +1,61 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flufmt/noticia/bloc/noticia.dart';
-import 'package:flufmt/noticia/common.dart';
-import 'package:flufmt/noticia/ler_noticia_page.dart';
-import 'package:flufmt/noticia/noticia_model.dart';
+import 'package:flufmt/eventos/bloc/eventos.dart';
+import 'package:flufmt/common.dart';
+import 'package:flufmt/eventos/evento_model.dart';
+import 'package:flufmt/eventos/pages/ler_evento_page.dart';
 import 'package:flufmt/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class NoticiasPage extends StatefulWidget {
-  NoticiasPage({Key key}) : super(key: key);
+class EventosPage extends StatefulWidget {
+  EventosPage({Key key}) : super(key: key);
 
   @override
-  _NoticiasPageState createState() => _NoticiasPageState();
+  _EventosPageState createState() => _EventosPageState();
 }
 
-class _NoticiasPageState extends State<NoticiasPage> {
+class _EventosPageState extends State<EventosPage> {
   var _cardsListScrollController = ScrollController();
 
   @override
   void initState() {
-    _loadNoticias();
-    _cardsListScrollController.addListener(() {
-      if (_cardsListScrollController.position.extentAfter <= 0) {
-        _loadNextPage();
-      }
-    });
+    _loadEventos();
     super.initState();
   }
 
-  void _loadNoticias() {
-    getIt.get<NoticiaBloc>().dispatch(LoadNoticias(pagina: 0));
-  }
-
-  void _loadNextPage() {
-    getIt.get<NoticiaBloc>().dispatch(LoadNextPage());
+  void _loadEventos() {
+    getIt.get<EventosBloc>().dispatch(LoadEventos());
   }
 
   @override
   void dispose() {
     _cardsListScrollController.dispose();
-    getIt.get<NoticiaBloc>().dispose();
+    getIt.get<EventosBloc>().dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<NoticiaEvent, NoticiasState>(
-        bloc: getIt.get<NoticiaBloc>(),
+      body: BlocBuilder<EventosEvent, EventosState>(
+        bloc: getIt.get<EventosBloc>(),
         builder: (context, state) {
-          if (state is NoticiasLoaded) {
+          if (state is EventosLoaded) {
             return RefreshIndicator(
               onRefresh: () async {
-                _loadNoticias();
+                _loadEventos();
               },
               child: ListView.builder(
                 physics: const AlwaysScrollableScrollPhysics(),
                 controller: _cardsListScrollController,
-                itemCount: state.noticias.length + 1,
+                itemCount: state.eventos.length,
                 itemBuilder: (context, index) {
-                  if (index < state.noticias.length) {
+                  if (index < state.eventos.length) {
                     return GestureDetector(
                       onTap: () =>
-                          _pushPaginaLerNoticia(context, state.noticias[index]),
-                      child: NoticiaCard(
-                        noticia: state.noticias[index],
+                          _pushPaginaLerEvento(context, state.eventos[index]),
+                      child: EventoCard(
+                        evento: state.eventos[index],
                       ),
                     );
                   }
@@ -76,11 +67,11 @@ class _NoticiasPageState extends State<NoticiasPage> {
                 },
               ),
             );
-          } else if (state is NoticiasLoading) {
+          } else if (state is EventosLoading) {
             return Center(
               child: CircularProgressIndicator(),
             );
-          } else if (state is NoticiasError) {
+          } else if (state is EventosError) {
             return RefreshIndicator(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -95,7 +86,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                 ),
               ),
               onRefresh: () async {
-                _loadNoticias();
+                _loadEventos();
               },
             );
           }
@@ -106,17 +97,17 @@ class _NoticiasPageState extends State<NoticiasPage> {
   }
 }
 
-class NoticiaCard extends StatelessWidget {
-  final NoticiaModel noticia;
+class EventoCard extends StatelessWidget {
+  final EventoModel evento;
 
-  String get _imagemUrl => noticia.imagemNoticia != null
-      ? 'http://www.ufmt.br/ufmt/site/userfiles/noticias/${noticia.imagemNoticia}'
+  String get _imagemUrl => evento.iconeDivulgacao != null
+      ? 'http://www.ufmt.br/ufmt/site/userfiles/divulgacao/${evento.iconeDivulgacao}'
       : null;
 
-  const NoticiaCard({
+  const EventoCard({
     Key key,
-    @required this.noticia,
-  })  : assert(noticia != null),
+    @required this.evento,
+  })  : assert(evento != null),
         super(key: key);
 
   @override
@@ -128,44 +119,34 @@ class NoticiaCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          (_imagemUrl != null)
-              ? Container(
-                  constraints: BoxConstraints.tightFor(
-                    width: double.infinity,
-                    height: 200.0,
+          ListTile(
+            title: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    evento.tituloDivulgacao,
+                    style: TextStyle(fontSize: 20.0),
                   ),
-                  child: _buildImage(_imagemUrl),
-                )
-              : null,
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  noticia.tituloNoticia,
-                  style: TextStyle(fontSize: 22.0),
-                ),
-                SizedBox(
-                  height: 8.0,
-                ),
-                Text(noticia.chamadaNoticia)
-              ],
+                ],
+              ),
             ),
+            trailing: (_imagemUrl != null) ? _buildImage(_imagemUrl) : null,
           ),
           // FIXME: No futuro usar os temas globais aqui.
           ButtonTheme.bar(
             child: ButtonBar(
               children: <Widget>[
                 FlatButton(
-                  textColor: AZUL_UFMT,
+                  textColor: CustomColors.AZUL_UFMT,
                   child: const Text('LER'),
                   onPressed: () {
-                    _pushPaginaLerNoticia(context, noticia);
+                    _pushPaginaLerEvento(context, evento);
                   },
                 ),
                 FlatButton(
-                  textColor: AZUL_UFMT,
+                  textColor: CustomColors.AZUL_UFMT,
                   child: Row(
                     children: <Widget>[
                       const Icon(
@@ -177,9 +158,9 @@ class NoticiaCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  onPressed: () => compartilhaNoticia(
-                        titulo: noticia.tituloNoticia,
-                        idNoticia: noticia.idNoticia,
+                  onPressed: () => compartilhaEvento(
+                        titulo: evento.tituloDivulgacao,
+                        idEvento: evento.idDivulgacao,
                       ),
                 ),
               ],
@@ -199,7 +180,7 @@ class NoticiaCard extends StatelessWidget {
                 'Não foi possível carregar essa imagem.',
               ),
             ),
-        fit: BoxFit.cover,
+        fit: BoxFit.scaleDown,
       );
       return image;
     } catch (e) {
@@ -208,11 +189,11 @@ class NoticiaCard extends StatelessWidget {
   }
 }
 
-void _pushPaginaLerNoticia(BuildContext context, NoticiaModel noticia) {
+void _pushPaginaLerEvento(BuildContext context, EventoModel evento) {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => LerNoticiaPage(noticia: noticia),
+      builder: (context) => LerEventoPage(evento: evento),
     ),
   );
 }

@@ -1,10 +1,9 @@
-import 'package:flufmt/main.dart';
 import 'package:flufmt/noticia/noticia_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flufmt/noticia/common.dart';
+import 'package:flufmt/common.dart';
 
 class LerNoticiaPage extends StatelessWidget {
   final NoticiaModel noticia;
@@ -57,7 +56,7 @@ class LerNoticiaPage extends StatelessWidget {
                 renderNewlines: true,
                 useRichText: true,
                 linkStyle: TextStyle(
-                  color: AZUL_UFMT,
+                  color: CustomColors.AZUL_UFMT,
                 ),
                 onLinkTap: disparaUrl,
               ),
