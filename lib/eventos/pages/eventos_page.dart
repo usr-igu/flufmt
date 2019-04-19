@@ -120,13 +120,13 @@ class EventoCard extends StatelessWidget {
         children: <Widget>[
           ListTile(
             title: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
                     evento.tituloDivulgacao,
-                    style: TextStyle(fontSize: 20.0),
+                    style: TextStyle(fontSize: 21.0),
                   ),
                 ],
               ),
@@ -140,10 +140,11 @@ class EventoCard extends StatelessWidget {
           ButtonTheme.bar(
             layoutBehavior: ButtonBarLayoutBehavior.constrained,
             child: ButtonBar(
+              alignment: MainAxisAlignment.start,
               children: <Widget>[
                 FlatButton(
                   textColor: CustomColors.AZUL_UFMT,
-                  child: const Text('LER'),
+                  child: const Text('DETALHES'),
                   onPressed: () {
                     _pushPaginaLerEvento(context, evento);
                   },

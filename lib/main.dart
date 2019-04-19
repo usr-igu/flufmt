@@ -21,26 +21,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'flufmt',
-      theme: ThemeData.light().copyWith(
-        primaryColor: CustomColors.AZUL_UFMT,
-        accentColor: CustomColors.AZUL_UFMT,
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primaryColor: Colors.white,
+        scaffoldBackgroundColor: Colors.white,
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: CustomColors.AZUL_UFMT,
-        ),
-        textTheme: Theme.of(context).textTheme.copyWith(
-              title: TextStyle(fontSize: 24.0, color: CustomColors.AZUL_UFMT),
-              body1: TextStyle(fontSize: 14.0, color: Colors.black),
-            ),
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: Theme.of(context).appBarTheme.copyWith(
-              color: Colors.white,
-              textTheme: TextTheme(
-                title: TextStyle(color: Colors.black, fontSize: 20),
-              ),
-              iconTheme: IconThemeData(
-                color: Colors.black,
-              ),
-            ),
+        )
       ),
       home: SafeArea(child: HomePage()),
       localizationsDelegates: [

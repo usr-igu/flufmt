@@ -33,7 +33,10 @@ class LerEventoPage extends StatelessWidget {
             children: <Widget>[
               Text(
                 evento.tituloDivulgacao,
-                style: Theme.of(context).textTheme.title,
+                style: Theme.of(context)
+                    .textTheme
+                    .title
+                    .apply(color: CustomColors.AZUL_UFMT),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
