@@ -46,7 +46,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<NoticiaEvent, NoticiasState>(
+      body: BlocBuilder<NoticiaBloc, NoticiasState>(
         bloc: getIt.get<NoticiaBloc>(),
         builder: (context, state) {
           if (state is NoticiasLoaded) {
@@ -180,9 +180,9 @@ class NoticiaCard extends StatelessWidget {
                     ],
                   ),
                   onPressed: () => compartilhaNoticia(
-                        titulo: noticia.tituloNoticia,
-                        idNoticia: noticia.idNoticia,
-                      ),
+                    titulo: noticia.tituloNoticia,
+                    idNoticia: noticia.idNoticia,
+                  ),
                 ),
               ],
             ),
@@ -197,10 +197,10 @@ class NoticiaCard extends StatelessWidget {
       final image = CachedNetworkImage(
         imageUrl: url,
         errorWidget: (context, url, error) => Center(
-              child: Text(
-                'Não foi possível carregar essa imagem.',
-              ),
-            ),
+          child: Text(
+            'Não foi possível carregar essa imagem.',
+          ),
+        ),
         fit: BoxFit.cover,
       );
       return image;

@@ -11,7 +11,7 @@ import 'package:intl/intl.dart';
 
 void main() {
   Intl.defaultLocale = 'pt_BR';
-  BlocSupervisor().delegate = SimpleBlocDelegate();
+  BlocSupervisor.delegate = SimpleBlocDelegate();
   setupServiceLocator();
   runApp(MyApp());
 }
@@ -22,13 +22,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'flufmt',
       theme: ThemeData(
-        brightness: Brightness.light,
-        primaryColor: Colors.white,
-        scaffoldBackgroundColor: Colors.white,
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor: CustomColors.AZUL_UFMT,
-        )
-      ),
+          brightness: Brightness.light,
+          primaryColor: Colors.white,
+          scaffoldBackgroundColor: Colors.white,
+          floatingActionButtonTheme: FloatingActionButtonThemeData(
+            backgroundColor: CustomColors.AZUL_UFMT,
+          )),
       home: SafeArea(child: HomePage()),
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,

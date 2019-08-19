@@ -6,7 +6,6 @@ import 'package:flufmt/noticia/bloc/noticia_state.dart';
 import 'package:flufmt/noticia/noticia_repository.dart';
 import 'package:flufmt/service_locator.dart';
 import 'package:flutter/foundation.dart';
-import 'package:rxdart/rxdart.dart';
 
 class NoticiaBloc extends Bloc<NoticiaEvent, NoticiasState> {
   final _noticiaService = getIt.get<NoticiaService>();
@@ -17,12 +16,6 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiasState> {
 
   @override
   NoticiasState get initialState => NoticiasInitial();
-
-  @override
-  Stream<NoticiaEvent> transform(Stream<NoticiaEvent> events) {
-    return (events as Observable<NoticiaEvent>)
-        .debounce(Duration(milliseconds: 300));
-  }
 
   @override
   Stream<NoticiasState> mapEventToState(event) async* {

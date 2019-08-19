@@ -7,8 +7,7 @@ abstract class NoticiaEvent extends Equatable {
 class LoadNoticias extends NoticiaEvent {
   final int pagina;
 
-  LoadNoticias({this.pagina = 0})
-      : super([pagina]);
+  LoadNoticias({this.pagina = 0}) : super([pagina]);
 
   @override
   String toString() => 'LoadNoticias { página: $pagina }';

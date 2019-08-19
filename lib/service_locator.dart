@@ -5,7 +5,7 @@ import 'package:flufmt/noticia/noticia_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_it/get_it.dart';
 
-GetIt getIt = GetIt();
+GetIt getIt = GetIt.instance;
 
 void setupServiceLocator() {
   getIt.registerSingleton<NoticiaService>(NoticiaService(http.Client()));

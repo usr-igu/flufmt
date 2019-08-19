@@ -37,7 +37,7 @@ class _EventosPageState extends State<EventosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<EventosEvent, EventosState>(
+      body: BlocBuilder<EventosBloc, EventosState>(
         bloc: getIt.get<EventosBloc>(),
         builder: (context, state) {
           if (state is EventosLoaded) {
@@ -163,9 +163,9 @@ class EventoCard extends StatelessWidget {
                     ],
                   ),
                   onPressed: () => compartilhaEvento(
-                        titulo: evento.tituloDivulgacao,
-                        idEvento: evento.idDivulgacao,
-                      ),
+                    titulo: evento.tituloDivulgacao,
+                    idEvento: evento.idDivulgacao,
+                  ),
                 ),
               ],
             ),
@@ -180,10 +180,10 @@ class EventoCard extends StatelessWidget {
       final image = CachedNetworkImage(
         imageUrl: url,
         errorWidget: (context, url, error) => Center(
-              child: Text(
-                'Não foi possível carregar essa imagem.',
-              ),
-            ),
+          child: Text(
+            'Não foi possível carregar essa imagem.',
+          ),
+        ),
         fit: BoxFit.cover,
       );
       return image;
